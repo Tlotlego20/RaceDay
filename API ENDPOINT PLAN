@@ -1,68 +1,25 @@
-# RaceDay API Endpoint Plan
 
-## Section B – API Endpoint Plan
+HTTP Method	Route	Description	Role Required	Request Body	Expected Response
+POST	/api/auth/register	Registers a new participant or organiser account.	Public	FirstName, LastName, Email, Phone, Role	201 Created – Account created; 400 Bad Request
+POST	/api/auth/login	Authenticates an organiser or participant.	Public	Email, Password	200 OK – Login successful; 401 Unauthorized
+GET	/api/profile/{id}	Retrieves a participant or organiser profile.	Any logged in	None	200 OK – Profile returned; 404 Not Found
+PUT	/api/profile/participant/{id}	Updates a participant's profile information.	Participant	FirstName, LastName, Email, Phone	200 OK – Profile updated; 404 Not Found
+PUT	/api/profile/organiser/{id}	Updates an organiser's profile information.	Organiser	FirstName, LastName, Email, Phone	200 OK – Profile updated; 404 Not Found
+GET	/api/events	Retrieves a list of upcoming RaceDay events.	Public	None	200 OK – List of events
+GET	/api/events/{id}	Retrieves details of a specific event.	Public	None	200 OK – Event details; 404 Not Found
+POST	/api/events	Creates a new RaceDay event.	Organiser	OrganiserID, Name, Description, EventDate, Location, Status	201 Created – Event created; 400 Bad Request
+PUT	/api/events/{id}	Updates an existing event.	Organiser	Name, Description, EventDate, Location, Status	200 OK – Event updated; 404 Not Found
+DELETE	/api/events/{id}	Deletes an existing event.	Organiser	None	204 No Content – Event deleted; 404 Not Found
+GET	/api/events/{eventId}/categories	Retrieves all categories for a specific event.	Public	None	200 OK – Categories returned
+POST	/api/events/{eventId}/categories	Creates a category for an event.	Organiser	Name, DistanceKm, EntryFee	201 Created – Category created; 400 Bad Request
+PUT	/api/categories/{id}	Updates an existing event category.	Organiser	Name, DistanceKm, EntryFee	200 OK – Category updated; 404 Not Found
+DELETE	/api/categories/{id}	Deletes an event category.	Organiser	None	204 No Content – Category deleted; 404 Not Found
+POST	/api/enrolments	Enrols a participant into an event category.	Participant	ParticipantID, EventID, CategoryID	201 Created – Enrolment created; 409 Conflict
+GET	/api/enrolments/participant/{participantId}	Retrieves all enrolments for a participant.	Participant	None	200 OK – Enrolments returned; 404 Not Found
+GET	/api/events/{eventId}/enrolments	Retrieves all participants enrolled in an event.	Organiser	None	200 OK – Enrolments returned; 404 Not Found
+DELETE	/api/enrolments/{id}	Cancels a participant's enrolment.	Participant	None	204 No Content – Enrolment cancelled; 404 Not Found
+POST	/api/results	Records a participant's result after an event.	Organiser	EnrolmentID, FinishTime, Position, ResultStatus	201 Created – Result recorded; 400 Bad Request
+GET	/api/results/{id}	Retrieves a specific race result.	Any logged in	None	200 OK – Result returned; 404 Not Found
+GET	/api/participants/{participantId}/results	Retrieves a participant's performance history.	Participant / Organiser	None	200 OK – Results returned; 404 Not Found
+PUT	/api/results/{id}	Updates an existing participant result.	Organiser	FinishTime, Position, ResultStatus	200 OK – Result updated; 404 Not Found
 
-| HTTP Method | Route | Description | Role Required | Request Body | Expected Response |
-|---|---|---|---|---|---|
-| POST | `/api/auth/register` | Registers a new participant or organiser account. | Public | FirstName, LastName, Email, Phone, Role | 201 Created – Account created; 400 Bad Request |
-| POST | `/api/auth/login` | Authenticates an organiser or participant. | Public | Email, Password | 200 OK – Login successful; 401 Unauthorized |
-| GET | `/api/profile/{id}` | Retrieves a participant or organiser profile. | Any logged in | None | 200 OK – Profile returned; 404 Not Found |
-| PUT | `/api/profile/participant/{id}` | Updates a participant's profile information. | Participant | FirstName, LastName, Email, Phone | 200 OK – Profile updated; 404 Not Found |
-| PUT | `/api/profile/organiser/{id}` | Updates an organiser's profile information. | Organiser | FirstName, LastName, Email, Phone | 200 OK – Profile updated; 404 Not Found |
-| GET | `/api/events` | Retrieves a list of upcoming RaceDay events. | Public | None | 200 OK – List of events |
-| GET | `/api/events/{id}` | Retrieves details of a specific event. | Public | None | 200 OK – Event details; 404 Not Found |
-| POST | `/api/events` | Creates a new RaceDay event. | Organiser | OrganiserID, Name, Description, EventDate, Location, Status | 201 Created – Event created; 400 Bad Request |
-| PUT | `/api/events/{id}` | Updates an existing event. | Organiser | Name, Description, EventDate, Location, Status | 200 OK – Event updated; 404 Not Found |
-| DELETE | `/api/events/{id}` | Deletes an existing event. | Organiser | None | 204 No Content – Event deleted; 404 Not Found |
-| GET | `/api/events/{eventId}/categories` | Retrieves all categories for a specific event. | Public | None | 200 OK – Categories returned |
-| POST | `/api/events/{eventId}/categories` | Creates a category for an event. | Organiser | Name, DistanceKm, EntryFee | 201 Created – Category created; 400 Bad Request |
-| PUT | `/api/categories/{id}` | Updates an existing event category. | Organiser | Name, DistanceKm, EntryFee | 200 OK – Category updated; 404 Not Found |
-| DELETE | `/api/categories/{id}` | Deletes an event category. | Organiser | None | 204 No Content – Category deleted; 404 Not Found |
-| POST | `/api/enrolments` | Enrols a participant into an event category. | Participant | ParticipantID, EventID, CategoryID | 201 Created – Enrolment created; 409 Conflict |
-| GET | `/api/enrolments/participant/{participantId}` | Retrieves all enrolments for a participant. | Participant | None | 200 OK – Enrolments returned; 404 Not Found |
-| GET | `/api/events/{eventId}/enrolments` | Retrieves all participants enrolled in an event. | Organiser | None | 200 OK – Enrolments returned; 404 Not Found |
-| DELETE | `/api/enrolments/{id}` | Cancels a participant's enrolment. | Participant | None | 204 No Content – Enrolment cancelled; 404 Not Found |
-| POST | `/api/results` | Records a participant's result after an event. | Organiser | EnrolmentID, FinishTime, Position, ResultStatus | 201 Created – Result recorded; 400 Bad Request |
-| GET | `/api/results/{id}` | Retrieves a specific race result. | Any logged in | None | 200 OK – Result returned; 404 Not Found |
-| GET | `/api/participants/{participantId}/results` | Retrieves a participant's performance history. | Participant / Organiser | None | 200 OK – Results returned; 404 Not Found |
-| PUT | `/api/results/{id}` | Updates an existing participant result. | Organiser | FinishTime, Position, ResultStatus | 200 OK – Result updated; 404 Not Found |
-
----
-
-## API Endpoint Summary
-
-The RaceDay API provides endpoints for authentication, user profiles, events, event categories, participant enrolments and race results. Public users can view events and categories, while authenticated participants and organisers have access to functions based on their roles.
-
-### Authentication
-- Register a new account
-- Login to the system
-
-### User Profile
-- View participant or organiser profile
-- Update participant profile
-- Update organiser profile
-
-### Events
-- View all events
-- View a specific event
-- Create an event
-- Update an event
-- Delete an event
-
-### Categories
-- View event categories
-- Create a category
-- Update a category
-- Delete a category
-
-### Enrolments
-- Enrol a participant
-- View participant enrolments
-- View event enrolments
-- Cancel an enrolment
-
-### Results
-- Record race results
-- View individual results
-- View participant performance history
-- Update race results
