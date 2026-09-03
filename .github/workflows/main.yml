@@ -1,0 +1,69 @@
+name: RaceDay Project Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-project:
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show project files
+        run: |
+          echo "===== PROJECT FILES ====="
+          ls -la
+          echo ""
+          echo "===== DOCS FOLDER ====="
+
+          if [ -d "docs" ]; then
+            ls -la docs
+          else
+            echo "ERROR: docs folder was not found."
+            exit 1
+          fi
+
+      - name: Check SQL file
+        run: |
+          echo "Checking SQL file..."
+
+          if find docs -iname "*.sql" | grep -q .; then
+            echo "SQL file found."
+          else
+            echo "ERROR: No SQL file found in docs folder."
+            exit 1
+          fi
+
+      - name: Check ERD file
+        run: |
+          echo "Checking ERD..."
+
+          if find docs -iname "*.png" -o -iname "*.pdf" | grep -qi "erd"; then
+            echo "ERD file found."
+          else
+            echo "WARNING: ERD file was not found."
+          fi
+
+      - name: Check API Endpoint Plan
+        run: |
+          echo "Checking API Endpoint Plan..."
+
+          if find docs -type f | grep -qi "api"; then
+            echo "API Endpoint Plan found."
+          else
+            echo "WARNING: API Endpoint Plan was not found."
+          fi
+
+      - name: Validation successful
+        run: |
+          echo "======================================"
+          echo "RaceDay project validation successful!"
+          echo "======================================"
