@@ -1,0 +1,61 @@
+name: RaceDay Project Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-project:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check docs folder
+        run: |
+          if [ ! -d "docs" ]; then
+            echo "ERROR: docs folder is missing."
+            exit 1
+          fi
+          echo "docs folder found."
+
+      - name: Check required files
+        run: |
+          echo "Checking required project files..."
+
+          if [ ! -f "docs/ERD.png" ] && [ ! -f "docs/ERD.pdf" ]; then
+            echo "ERROR: ERD file is missing."
+            exit 1
+          fi
+
+          if [ ! -f "docs/API-Endpoint-Plan.md" ] && [ ! -f "docs/API-Endpoint-Plan.pdf" ]; then
+            echo "ERROR: API Endpoint Plan is missing."
+            exit 1
+          fi
+
+          if [ ! -f "docs/RaceDay.sql" ]; then
+            echo "ERROR: SQL script is missing."
+            exit 1
+          fi
+
+          echo "All required files were found."
+
+      - name: Validate SQL file
+        run: |
+          if [ ! -s "docs/RaceDay.sql" ]; then
+            echo "ERROR: RaceDay.sql is empty."
+            exit 1
+          fi
+
+          echo "SQL file exists and is not empty."
+
+      - name: Validation successful
+        run: |
+          echo "====================================="
+          echo "RaceDay project validation successful!"
+          echo "====================================="
